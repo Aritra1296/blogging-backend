@@ -3,10 +3,10 @@ const router = express.Router()
 const Comment = require('../models/Comment')
 
 
-//GET ALL THE MESSAGES
-router.get('/all', async (req, res) => {
+//GET ALL THE COMMENTS OF A BLOG
+router.get('/:blogId', async (req, res) => {
   try {
-    const comment = await Comment.find()
+    const comment = await Comment.find({ blogId: req.params.blogId })
     res.json(comment)
   } catch (error) {
     res.json({ message: error })

@@ -7,7 +7,7 @@ require('dotenv/config')
 
 //MIDDLEWARE
 //COFIGURE CORS
-// app.use('/ProductImages',express.static('ProductImages'));
+// app.use('/BlogImages',express.static('BlogImages'));
 app.use(express.json())
 app.use(cookieParser())
 app.use(
