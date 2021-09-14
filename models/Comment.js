@@ -13,9 +13,6 @@ const commentSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  commentLike: {
-    type: Number,
-  },
   timestamp: {
     type: Date,
     default: Date.now,

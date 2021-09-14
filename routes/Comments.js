@@ -13,13 +13,12 @@ router.get('/:blogId', async (req, res) => {
   }
 })
 
-//SUBMIT A MESSAGE
+//SUBMIT A Comment
 router.post('/subMitNew', async (req, res) => {
   const comment = new Comment({
     userId: req.body.userId,
     blogId: req.body.blogId,
     comment: req.body.comment,
-    commentLike: req.body.commentLike,
   })
   try {
     const savedComment = await comment.save()
