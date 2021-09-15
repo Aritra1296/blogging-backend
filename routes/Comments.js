@@ -16,7 +16,7 @@ router.get('/:blogId', async (req, res) => {
 //SUBMIT A Comment
 router.post('/subMitNew', async (req, res) => {
   const comment = new Comment({
-    userId: req.body.userId,
+    userName: req.body.userName,
     blogId: req.body.blogId,
     comment: req.body.comment,
   })

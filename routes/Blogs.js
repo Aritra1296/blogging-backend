@@ -27,25 +27,23 @@ router.get('/all', async (req, res) => {
 })
 
 //SUBMIT A BLOGS
-router.post(
-  '/submitNew',
-  upload.single('productImage'),
-  async (req, res) => {
-    const blog = new Blog({
-      name: req.body.name,
-      description: req.body.description,
-      blogLike: req.body.blogLike,
-      blogImage: req.files.map((file) => {
-        return file.path
-      }),
-    })
-    try {
-      const savedBlog = await blog.save()
-      res.json(savedBlog)
-    } catch (err) {
-      res.json({ message: err })
-    }
+router.post('/submitNew', upload.single('blogImage'), async (req, res) => {
+console.log(req.body)
+console.log(req.file)
+
+  const blog = new Blog({
+    name: req.body.blogName,
+    description: req.body.blogDescription,
+    blogLike: 0,
+    blogImage: req.file.path,
+  })
+  
+  try {
+    const savedBlog = await blog.save()
+    res.json(savedBlog)
+  } catch (err) {
+    res.json({ message: err })
   }
-)
+})
 
 module.exports = router
