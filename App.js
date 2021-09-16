@@ -47,7 +47,7 @@ db.once('open', function () {
   const commentCollection = db.collection('comments')
   const changeStream = commentCollection.watch()
   changeStream.on('change', (change) => {
-    console.log('A change occured', change)
+   // console.log('A change occured', change)
 
     if (change.operationType === 'insert') {
       const commentDetails = change.fullDocument

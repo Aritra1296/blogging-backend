@@ -10,7 +10,7 @@ const blogSchema = mongoose.Schema({
     required: true,
   },
   blogImage: {
-    type: [String],
+    type: String,
     required: true,
   },
   blogLike: {
