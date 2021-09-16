@@ -15,7 +15,6 @@ const storage = multer.diskStorage({
 })
 const upload = multer({ storage: storage })
 
-
 //GET ALL THE BLOGS
 router.get('/all', async (req, res) => {
   try {
@@ -28,19 +27,45 @@ router.get('/all', async (req, res) => {
 
 //SUBMIT A BLOGS
 router.post('/submitNew', upload.single('blogImage'), async (req, res) => {
-console.log(req.body)
-console.log(req.file)
-
   const blog = new Blog({
     name: req.body.blogName,
     description: req.body.blogDescription,
     blogLike: 0,
     blogImage: req.file.path,
   })
-  
+
   try {
     const savedBlog = await blog.save()
     res.json(savedBlog)
+  } catch (err) {
+    res.json({ message: err })
+  }
+})
+
+//ADD LIKE TO A BLOG
+router.patch('/addLike', async (req, res) => {
+  console.log(req.body)
+  try {
+    const updatedBlog = await Blog.updateOne(
+      { _id: req.body.blogId },
+      { $push: { likedUser: req.body.userId } },
+      { $push: { blogLike: { likedUser: $size } } }
+    )
+    res.json(updatedBlog)
+  } catch (err) {
+    res.json({ message: err })
+  }
+})
+
+//REMOVE LIKE TO A BLOG
+router.patch('/removeLike', async (req, res) => {
+  console.log(req.body)
+  try {
+    const updatedBlog = await Blog.updateOne(
+      { _id: req.body.blogId },
+      { $pull: { likedUser: req.body.userId } }
+    )
+    res.json(updatedBlog)
   } catch (err) {
     res.json({ message: err })
   }

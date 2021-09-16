@@ -32,7 +32,6 @@ const pusher = new Pusher({
   useTLS: true,
 })
 
-
 //CONNECT TO DB
 mongoose.connect(
   process.env.DB_CONNECTION,
