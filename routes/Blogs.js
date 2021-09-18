@@ -46,18 +46,16 @@ router.post('/submitNew', upload.single('blogImage'), async (req, res) => {
 router.patch('/addLike', async (req, res) => {
   console.log(req.body)
   try {
-    // const updatedBlog = await Blog.updateOne(
-    //   { _id: req.body.blogId },
-    //   { $push: { likedUser: req.body.userId } },
-    //   //{ $set: { blogLike: { $size: "$likedUser" } } }
-    //   //{ $inc: { blogLike: 1 } }
-    // )
-     const updatedBlogLike = await Blog.updateOne(
-       { _id: req.body.blogId },
-       { $set: { blogLike: { $size: "$likedUser" } } }
-     )
-    //res.json(updatedBlog, updatedBlogLike)
-
+    const updatedBlog = await Blog.updateOne(
+      { _id: req.body.blogId },
+      { $addToSet: { likedUser: req.body.userId } }
+    )
+    const updatedBlogLike = await Blog.updateOne(
+      { _id: req.body.blogId },
+      { $inc: { blogLike: 1 } }
+    )
+    // res.json(updatedBlog)
+    // res.json(updatedBlogLike)
   } catch (err) {
     res.json({ message: err })
   }
@@ -65,14 +63,17 @@ router.patch('/addLike', async (req, res) => {
 
 //REMOVE LIKE TO A BLOG
 router.patch('/removeLike', async (req, res) => {
-  console.log(req.body)
   try {
     const updatedBlog = await Blog.updateOne(
       { _id: req.body.blogId },
-      { $inc: { blogLike: -1 } },
       { $pull: { likedUser: req.body.userId } }
     )
-    res.json(updatedBlog)
+    const updatedBlogLike = await Blog.updateOne(
+      { _id: req.body.blogId },
+      { $inc: { blogLike: -1 } }
+    )
+    // res.json(updatedBlog)
+    // res.json( updatedBlogLike)
   } catch (err) {
     res.json({ message: err })
   }

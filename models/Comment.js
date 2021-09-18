@@ -4,6 +4,7 @@ const commentSchema = mongoose.Schema({
   userName: {
     type: String,
     required: true,
+    trim: true,
   },
   blogId: {
     type: String,
@@ -12,6 +13,7 @@ const commentSchema = mongoose.Schema({
   comment: {
     type: String,
     required: true,
+    trim: true,
   },
   timestamp: {
     type: Date,

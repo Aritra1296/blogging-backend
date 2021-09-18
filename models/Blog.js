@@ -17,7 +17,6 @@ const blogSchema = mongoose.Schema({
   },
   likedUser: {
     type: [String],
-    unique: true,
     trim: true,
   },
   blogLike: {
