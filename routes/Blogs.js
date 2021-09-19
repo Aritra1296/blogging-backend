@@ -44,7 +44,6 @@ router.post('/submitNew', upload.single('blogImage'), async (req, res) => {
 
 //ADD LIKE TO A BLOG
 router.patch('/addLike', async (req, res) => {
-  console.log(req.body)
   try {
     const updatedBlog = await Blog.updateOne(
       { _id: req.body.blogId },
