@@ -1,10 +1,11 @@
 const express = require('express')
 const router = express.Router()
 const Comment = require('../models/Comment')
+const auth = require('../middleware/auth')
 
 
 //GET ALL THE COMMENTS OF A BLOG
-router.get('/:blogId', async (req, res) => {
+router.get('/:blogId', auth, async (req, res) => {
   try {
     const comment = await Comment.find({ blogId: req.params.blogId })
     res.json(comment)
@@ -14,7 +15,7 @@ router.get('/:blogId', async (req, res) => {
 })
 
 //SUBMIT A Comment
-router.post('/subMitNew', async (req, res) => {
+router.post('/subMitNew', auth, async (req, res) => {
   const comment = new Comment({
     userName: req.body.userName,
     blogId: req.body.blogId,

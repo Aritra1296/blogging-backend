@@ -3,6 +3,7 @@ const router = express.Router()
 const Blog = require('../models/Blog')
 const path = require('path')
 const multer = require('multer')
+const auth = require('../middleware/auth')
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -16,7 +17,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage })
 
 //GET ALL THE BLOGS
-router.get('/all', async (req, res) => {
+router.get('/all', auth, async (req, res) => {
   try {
     const blog = await Blog.find()
     res.json(blog)
@@ -26,36 +27,49 @@ router.get('/all', async (req, res) => {
 })
 
 //SUBMIT A BLOGS
-router.post('/submitNew', upload.single('blogImage'), async (req, res) => {
-  const blog = new Blog({
-    name: req.body.blogName,
-    description: req.body.blogDescription,
-    blogLike: 0,
-    blogImage: req.file.path,
-  })
+router.post(
+  '/submitNew',
+  auth,
+  upload.single('blogImage'),
+  async (req, res) => {
+    const blog = new Blog({
+      name: req.body.blogName,
+      description: req.body.blogDescription,
+      blogLike: 0,
+      blogImage: req.file.path,
+    })
 
-  try {
-    const savedBlog = await blog.save()
-    res.json(savedBlog)
-  } catch (err) {
-    res.json({ message: err })
+    try {
+      const savedBlog = await blog.save()
+      res.json(savedBlog)
+    } catch (err) {
+      res.json({ message: err })
+    }
   }
-})
+)
 
 //CHECK A BLOG IS LIKED OR NOT LIKED
 router.get('/checkLike', async (req, res) => {
   try {
-   const blog = await Blog.find({
-     _id: req.query.blogId,
-     likedUser: req.query.userId,
-   })
+    //console.log(req.query)
+    const userID = req.query.userId
+    // console.log(userID)
+    const likedBlog = await Blog.find({
+      $and: [{ _id: req.query.blogId }, { likedUser: { $in: userID } }],
+    })
+
+    if (!likedBlog) {
+      res.status(401).json({ message: 'UserId or BlogID Not Matched' })
+    } else {
+      res.status(400).json(true)
+    }
   } catch (err) {
-    res.json({ message: err })
+    res.status(401).json({ message: err })
   }
 })
 
 //ADD LIKE TO A BLOG
-router.patch('/addLike', async (req, res) => {
+router.patch('/addLike', auth, async (req, res) => {
   try {
     const updatedBlog = await Blog.updateOne(
       { _id: req.body.blogId },
@@ -73,7 +87,7 @@ router.patch('/addLike', async (req, res) => {
 })
 
 //REMOVE LIKE TO A BLOG
-router.patch('/removeLike', async (req, res) => {
+router.patch('/removeLike', auth, async (req, res) => {
   try {
     const updatedBlog = await Blog.updateOne(
       { _id: req.body.blogId },
