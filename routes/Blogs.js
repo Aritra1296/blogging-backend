@@ -51,12 +51,9 @@ router.post(
 //ADD LIKE TO A BLOG
 router.patch('/addLike', auth, async (req, res) => {
   try {
-    console.log(req.body)
     const likedBlog = await Blog.find({ _id: req.body.blogId })
-    console.log(likedBlog)
-    console.log(likedBlog[0].likedUser)
     if (!likedBlog[0].likedUser.includes(req.body.userId)) {
-        const updatedBlog = await Blog.updateOne(
+      const updatedBlog = await Blog.updateOne(
         { _id: req.body.blogId },
         { $addToSet: { likedUser: req.body.userId }, $inc: { blogLike: 1 } }
       )
@@ -72,16 +69,16 @@ router.patch('/addLike', auth, async (req, res) => {
 //REMOVE LIKE TO A BLOG
 router.patch('/removeLike', auth, async (req, res) => {
   try {
-   const likedBlog = await Blog.find({ _id: req.body.blogId })
-   if (likedBlog[0].likedUser.includes(req.body.userId)) {
-     const updatedBlog = await Blog.updateOne(
-       { _id: req.body.blogId },
-       { $pull: { likedUser: req.body.userId }, $inc: { blogLike: -1 } }
-     )
-     res.json(updatedBlog)
-   } else {
-     res.status(500).json({ message: 'User Already Exist' })
-   }
+    const likedBlog = await Blog.find({ _id: req.body.blogId })
+    if (likedBlog[0].likedUser.includes(req.body.userId)) {
+      const updatedBlog = await Blog.updateOne(
+        { _id: req.body.blogId },
+        { $pull: { likedUser: req.body.userId }, $inc: { blogLike: -1 } }
+      )
+      res.json(updatedBlog)
+    } else {
+      res.status(500).json({ message: 'User Already Exist' })
+    }
   } catch (err) {
     res.json({ message: err })
   }
