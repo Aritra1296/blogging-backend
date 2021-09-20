@@ -48,57 +48,40 @@ router.post(
   }
 )
 
-//CHECK A BLOG IS LIKED OR NOT LIKED
-router.get('/checkLike', async (req, res) => {
-  try {
-    //console.log(req.query)
-    const userID = req.query.userId
-    // console.log(userID)
-    const likedBlog = await Blog.find({
-      $and: [{ _id: req.query.blogId }, { likedUser: { $in: userID } }],
-    })
-
-    if (!likedBlog) {
-      res.status(401).json({ message: 'UserId or BlogID Not Matched' })
-    } else {
-      res.status(400).json(true)
-    }
-  } catch (err) {
-    res.status(401).json({ message: err })
-  }
-})
-
 //ADD LIKE TO A BLOG
 router.patch('/addLike', auth, async (req, res) => {
   try {
-    const updatedBlog = await Blog.updateOne(
-      { _id: req.body.blogId },
-      { $addToSet: { likedUser: req.body.userId } }
-    )
-    const updatedBlogLike = await Blog.updateOne(
-      { _id: req.body.blogId },
-      { $inc: { blogLike: 1 } }
-    )
-    // res.json(updatedBlog)
-    // res.json(updatedBlogLike)
+    console.log(req.body)
+    const likedBlog = await Blog.find({ _id: req.body.blogId })
+    console.log(likedBlog)
+    console.log(likedBlog[0].likedUser)
+    if (!likedBlog[0].likedUser.includes(req.body.userId)) {
+        const updatedBlog = await Blog.updateOne(
+        { _id: req.body.blogId },
+        { $addToSet: { likedUser: req.body.userId }, $inc: { blogLike: 1 } }
+      )
+      res.json(updatedBlog)
+    } else {
+      res.status(500).json({ message: 'User Already Exist' })
+    }
   } catch (err) {
-    res.json({ message: err })
+    res.status(500).json({ message: err })
   }
 })
 
 //REMOVE LIKE TO A BLOG
 router.patch('/removeLike', auth, async (req, res) => {
   try {
-    const updatedBlog = await Blog.updateOne(
-      { _id: req.body.blogId },
-      { $pull: { likedUser: req.body.userId } }
-    )
-    const updatedBlogLike = await Blog.updateOne(
-      { _id: req.body.blogId },
-      { $inc: { blogLike: -1 } }
-    )
-    // res.json(updatedBlog)
-    // res.json( updatedBlogLike)
+   const likedBlog = await Blog.find({ _id: req.body.blogId })
+   if (likedBlog[0].likedUser.includes(req.body.userId)) {
+     const updatedBlog = await Blog.updateOne(
+       { _id: req.body.blogId },
+       { $pull: { likedUser: req.body.userId }, $inc: { blogLike: -1 } }
+     )
+     res.json(updatedBlog)
+   } else {
+     res.status(500).json({ message: 'User Already Exist' })
+   }
   } catch (err) {
     res.json({ message: err })
   }
