@@ -92,7 +92,9 @@ router.post('/login', async (req, res) => {
     //SIGN TOKEN
     const token = jwt.sign(
       {
-        user: existingUser._id,
+        userId: existingUser._id,
+        userName: existingUser.userName,
+        userRole :existingUser.userRole
       },
       process.env.JWT_SECRET
     )
@@ -117,9 +119,12 @@ router.get('/loggedIn', async (req, res) => {
     const token = req.cookies.token
     if (!token) return res.status(401).json(false)
     const jwtToken = jwt.verify(token, process.env.JWT_SECRET)
+    console.log(jwtToken)
     res.send({
       loggedIn: true,
-      user: jwtToken.user,
+      userId: jwtToken.user,
+      userName: jwtToken.userName,
+      userRole: jwtToken.userRole,
     })
   } catch (error) {
     console.log(error)
