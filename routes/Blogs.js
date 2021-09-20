@@ -42,6 +42,18 @@ router.post('/submitNew', upload.single('blogImage'), async (req, res) => {
   }
 })
 
+//CHECK A BLOG IS LIKED OR NOT LIKED
+router.get('/checkLike', async (req, res) => {
+  try {
+   const blog = await Blog.find({
+     _id: req.query.blogId,
+     likedUser: req.query.userId,
+   })
+  } catch (err) {
+    res.json({ message: err })
+  }
+})
+
 //ADD LIKE TO A BLOG
 router.patch('/addLike', async (req, res) => {
   try {

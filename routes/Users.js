@@ -119,10 +119,10 @@ router.get('/loggedIn', async (req, res) => {
     const token = req.cookies.token
     if (!token) return res.status(401).json(false)
     const jwtToken = jwt.verify(token, process.env.JWT_SECRET)
-    console.log(jwtToken)
+    //console.log(jwtToken)
     res.send({
       loggedIn: true,
-      userId: jwtToken.user,
+      userId: jwtToken.userId,
       userName: jwtToken.userName,
       userRole: jwtToken.userRole,
     })
